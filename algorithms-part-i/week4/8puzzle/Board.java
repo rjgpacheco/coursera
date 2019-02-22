@@ -166,69 +166,6 @@ public class Board {
         return true;
     }        // does this board equal y?
 
-
-    /*
-    private class NeighborIterator implements Iterator<Board> {
-        private Queue<Board> neighbors;
-
-        public NeighborIterator() {
-            neighbors = new Queue<Board>();
-
-            int zeroI = -1;
-            int zeroJ = -1;
-
-            outerloop:
-            for (int i = 0; i < n; i = i + 1) {
-                for (int j = 0; j < n; j = j + 1) {
-                    if (blocks[i][j] == 0) {
-                        zeroI = i;
-                        zeroJ = j;
-                        break outerloop;
-                    }
-                }
-            }
-
-            if (isValidPosition(zeroI - 1, zeroJ)) { // Up
-                neighbors.enqueue(new Board(swap(blocks, zeroI, zeroJ, zeroI - 1, zeroJ)));
-            }
-
-
-            if (isValidPosition(zeroI + 1, zeroJ)) { // Down
-                neighbors.enqueue(new Board(swap(blocks, zeroI, zeroJ, zeroI + 1, zeroJ)));
-            }
-
-            if (isValidPosition(zeroI, zeroJ - 1)) { // Left
-                neighbors.enqueue(new Board(swap(blocks, zeroI, zeroJ, zeroI, zeroJ - 1)));
-            }
-
-            if (isValidPosition(zeroI, zeroJ + 1)) { // Right
-                neighbors.enqueue(new Board(swap(blocks, zeroI, zeroJ, zeroI, zeroJ + 1)));
-            }
-
-
-        }
-
-        public boolean hasNext() {
-            return (!neighbors.isEmpty());
-        }
-
-        public Board next() {
-            return neighbors.dequeue();
-        }
-
-    }
-
-    */
-    
-    /*
-    private class NeighborIterable implements Iterable<Board> {
-        public Iterator<Board> iterator() {
-            NeighborIterator iter = new NeighborIterator();
-            return iter;
-        }
-    }
-    */
-
     public Iterable<Board> neighbors() {
         // Iterable<Board> iter = new NeighborIterable();
         // return iter;
@@ -273,63 +210,6 @@ public class Board {
     private boolean isValidPosition(int i, int j) {
         return (i >= 0 && i < n && j >= 0 && j < n);
     }
-
-    /*
-    private void findNeighbours() {
-        int zeroI = -1;
-        int zeroJ = -1;
-
-        outerloop:
-        for (int i = 0; i < n; i = i + 1) {
-            for (int j = 0; j < n; j = j + 1) {
-                if (this.blocks[i][j] == 0) {
-                    zeroI = i;
-                    zeroJ = j;
-                    break outerloop;
-                }
-            }
-        }
-
-        System.out.format("Zero found at [%d][%d]%n", zeroI, zeroI);
-
-        System.out.println("Possible swaps:");
-
-        // Add them all to a list
-        List<Integer> listI = new ArrayList<>();
-        List<Integer> listJ = new ArrayList<>();
-
-        // Up
-        if (isValidPosition(zeroI - 1, zeroJ)) {
-            listI.add(zeroI - 1);
-            listJ.add(zeroJ);
-        }
-
-        // Down
-        if (isValidPosition(zeroI + 1, zeroJ)) {
-            listI.add(zeroI + 1);
-            listJ.add(zeroJ);
-        }
-
-        // Left
-        if (isValidPosition(zeroI, zeroJ - 1)) {
-            listI.add(zeroI);
-            listJ.add(zeroJ - 1);
-        }
-
-        // Right
-        if (isValidPosition(zeroI, zeroJ + 1)) {
-            listI.add(zeroI);
-            listJ.add(zeroJ + 1);
-        }
-
-        for (int k = 0; k < listI.size(); k = k + 1) {
-            System.out.format("%d. [%d][%d] = %d %n", k, listI.get(k), listJ.get(k),
-                              this.blocks[listI.get(k)][listJ.get(k)]);
-        }
-
-
-    }
-    */
 
     public String toString() {
 
