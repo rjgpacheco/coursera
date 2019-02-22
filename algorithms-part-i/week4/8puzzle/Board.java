@@ -7,8 +7,6 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Queue;
 
-import java.util.Iterator;
-
 public class Board {
 
     private final int[][] blocks;
@@ -168,8 +166,10 @@ public class Board {
         return true;
     }        // does this board equal y?
 
+
+    /*
     private class NeighborIterator implements Iterator<Board> {
-        private final Queue<Board> neighbors;
+        private Queue<Board> neighbors;
 
         public NeighborIterator() {
             neighbors = new Queue<Board>();
@@ -218,16 +218,55 @@ public class Board {
 
     }
 
+    */
+    
+    /*
     private class NeighborIterable implements Iterable<Board> {
         public Iterator<Board> iterator() {
             NeighborIterator iter = new NeighborIterator();
             return iter;
         }
     }
+    */
 
     public Iterable<Board> neighbors() {
-        Iterable<Board> iter = new NeighborIterable();
-        return iter;
+        // Iterable<Board> iter = new NeighborIterable();
+        // return iter;
+        Queue<Board> neighbors = new Queue<Board>();
+
+        int zeroI = -1;
+        int zeroJ = -1;
+
+        outerloop:
+        for (int i = 0; i < n; i = i + 1) {
+            for (int j = 0; j < n; j = j + 1) {
+                if (blocks[i][j] == 0) {
+                    zeroI = i;
+                    zeroJ = j;
+                    break outerloop;
+                }
+            }
+        }
+
+        if (isValidPosition(zeroI - 1, zeroJ)) { // Up
+            neighbors.enqueue(new Board(swap(blocks, zeroI, zeroJ, zeroI - 1, zeroJ)));
+        }
+
+        if (isValidPosition(zeroI + 1, zeroJ)) { // Down
+            neighbors.enqueue(new Board(swap(blocks, zeroI, zeroJ, zeroI + 1, zeroJ)));
+        }
+
+        if (isValidPosition(zeroI, zeroJ - 1)) { // Left
+            neighbors.enqueue(new Board(swap(blocks, zeroI, zeroJ, zeroI, zeroJ - 1)));
+        }
+
+        if (isValidPosition(zeroI, zeroJ + 1)) { // Right
+            neighbors.enqueue(new Board(swap(blocks, zeroI, zeroJ, zeroI, zeroJ + 1)));
+        }
+
+        return neighbors;
+
+
     }     // all neighboring boards
 
 
