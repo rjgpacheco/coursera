@@ -18,6 +18,9 @@ public class Solver {
 
     public Solver(Board initial) {
 
+        if (initial == null)
+            throw new java.lang.IllegalArgumentException();
+
         MinPQ<SearchNode> queueMain = new MinPQ<SearchNode>();
         MinPQ<SearchNode> queueTwin = new MinPQ<SearchNode>();
 
@@ -63,11 +66,12 @@ public class Solver {
                 break;
             }
 
-            if (minMain.board.isGoal()) {
+            if (minTwin.board.isGoal()) {
                 // System.out.format("Aww!");
                 // Do stuff...
                 this.moves = -1;
                 this.isSolvable = false;
+                this.solutionNode = null;
                 break;
             }
 
@@ -94,30 +98,35 @@ public class Solver {
 
     public int moves() {
         return this.moves;
-    }// min number of moves to solve initial board; -1 if unsolvable
+    } // min number of moves to solve initial board; -1 if unsolvable
 
     public Iterable<Board> solution() {
-        Stack<Board> steps = new Stack<Board>();
+        if (isSolvable()) {
+            Stack<Board> steps = new Stack<Board>();
 
-        SearchNode node = solutionNode;
+            SearchNode node = solutionNode;
 
-        steps.push(node.board);
-        while (node.prevNode != null) {
-            node = node.prevNode;
             steps.push(node.board);
-        }
+            while (node.prevNode != null) {
+                node = node.prevNode;
+                steps.push(node.board);
+            }
 
-        return steps;
+            return steps;
+        }
+        else {
+            return null;
+        }
     }     // sequence of boards in a shortest solution; null if unsolvable
 
 
     // Change this to private!
     private static class SearchNode implements Comparable<SearchNode> {
-        private Board board;
-        private int priority;
+        private final Board board;
+        private final int priority;
         private int moves;
-        private int manhatten;
-        private SearchNode prevNode;
+        private final int manhatten;
+        private final SearchNode prevNode;
 
         public SearchNode(Board board, SearchNode prevNode) {
 
@@ -136,9 +145,6 @@ public class Solver {
         }
 
         public int compareTo(SearchNode that) {
-            if (this.board.equals(that.board)) {
-                return 0;
-            }
             return Integer.compare(this.priority, that.priority);
         }
 
@@ -172,7 +178,7 @@ public class Solver {
 
         // My tests
 
-        //StdOut.println(initial.toString());
+        // StdOut.println(initial.toString());
 
         /*
         MinPQ<SearchNode> queue = new MinPQ<SearchNode>();

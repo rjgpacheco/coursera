@@ -14,6 +14,9 @@ public class Board {
 
     public Board(int[][] inBlocks) {
 
+        if (inBlocks == null)
+            throw new java.lang.IllegalArgumentException();
+
         int m = inBlocks[0].length;
 
         this.blocks = new int[m][m];
