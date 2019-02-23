@@ -22,8 +22,6 @@ public class Board {
                 this.blocks[i][j] = inBlocks[i][j];
         }
         this.n = this.blocks[0].length;
-
-
     }          // construct a board from an n-by-n array of blocks
 
     // (where blocks[i][j] = block in row i, column j)
@@ -260,6 +258,8 @@ public class Board {
         tiles[0][0] = 1;
         System.out.format("manhattan() = %d%n", initial.manhattan());
 
+
+        System.out.format("isGoal:%b%n", initial.isGoal());
     } // unit tests (not graded)
 
 }
