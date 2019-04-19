@@ -10,6 +10,10 @@ import edu.princeton.cs.algs4.SET;
 
 public class KdTree {
 
+    private class KdTreeBst {
+
+    }
+
     private SET<Point2D> pointSet;
 
     public KdTree() {

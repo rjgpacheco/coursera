@@ -14,7 +14,7 @@ import java.util.List;
 
 public class PointSET {
 
-    private SET<Point2D> pointSet;
+    private final SET<Point2D> pointSet;
 
     public PointSET() {
         // construct an empty set of points
@@ -72,12 +72,16 @@ public class PointSET {
 
     public Point2D nearest(Point2D p) {
         // a nearest neighbor in the set to point p; null if the set is empty
-        // Brute force approach, as askek
+        // Brute force approach, as asked
 
         if (p == null) throw new IllegalArgumentException();
-        
-        if (pointSet.isEmpty() || pointSet.size() == 1) {
+
+        if (pointSet.isEmpty()) {
             return null;
+        }
+
+        if (pointSet.contains(p)) {
+            return p;
         }
 
         Point2D closest = null;
@@ -87,11 +91,8 @@ public class PointSET {
 
         while (allPoints.hasNext()) {
             Point2D point = allPoints.next();
-            if (point.equals(p)) {
-                continue;
-            }
 
-            double distance = p.distanceTo(point);
+            double distance = p.distanceSquaredTo(point);
 
             if (distance < closestDistance) {
                 closest = point;
@@ -102,7 +103,7 @@ public class PointSET {
         return closest;
     }
 
-    public static void main(String[] args) {
-
-    }                 // unit testing of the methods (optional)
+    public static void main(String[] args) { // unit testing of the methods (optional)
+        // unit testing of the methods (optional)
+    }
 }
