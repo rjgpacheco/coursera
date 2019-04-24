@@ -42,7 +42,7 @@ public class KdTree {
 
             return false;
         }
-        
+
         // TODO: Remove later
         public RectHV getRect() {
             return rect;
