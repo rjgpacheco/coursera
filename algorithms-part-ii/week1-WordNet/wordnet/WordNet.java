@@ -16,18 +16,16 @@ import java.util.List;
 
 public class WordNet {
 
-    private HashMap<String, Integer> synsetNounToId = new HashMap<>();
-    private HashMap<Integer, String> synsetIdToSynset = new HashMap<>();
+    private final HashMap<String, Integer> synsetNounToId = new HashMap<>();
+    private final HashMap<Integer, String> synsetIdToSynset = new HashMap<>();
 
     // For each noun, keeptrack of which synsets it appears on
-    private HashMap<String, LinkedList<Integer>> synsetNounToIdList = new HashMap<>();
+    private final HashMap<String, LinkedList<Integer>> synsetNounToIdList = new HashMap<>();
 
     // private HashMap<Integer, String> SynsetIdToNoun = new HashMap<>();
 
     private Digraph G;
-    private SAP sapG;
-
-    private int numberOfSynsets;
+    private final SAP sapG;
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms)  {
@@ -41,7 +39,7 @@ public class WordNet {
         In in = new In(synsets);
         LinkedList<Integer> nounSynsetList;
 
-        numberOfSynsets = 0;
+        int numberOfSynsets = 0;
         while (in.hasNextLine()) {
             numberOfSynsets++;
             String[] fields = in.readLine().split(",");
@@ -132,7 +130,7 @@ public class WordNet {
         System.out.println(wordnet.G.V());
         System.out.println(wordnet.synsetNounToIdList.size());
 
-
+        System.out.println(wordnet.sap("running", "demotion"));
 
 
         // test out hasmaps

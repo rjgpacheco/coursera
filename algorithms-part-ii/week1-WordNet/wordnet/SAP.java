@@ -13,32 +13,66 @@ import java.util.Set;
 
 public class SAP {
 
-    private Digraph G;
+    private final Digraph G;
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph G) {
         if (G == null) throw new java.lang.IllegalArgumentException();
-        this.G = G;
+        this.G = new Digraph(G);
     }
 
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w) {
-        return getShortestPath(v, w).length;
+        if (v < 0 || w < 0 ) throw new java.lang.IllegalArgumentException();
+        return getShortestPathLength(v, w);
     }
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
+        if (v < 0 || w < 0 ) throw new java.lang.IllegalArgumentException();
         return getShortestAncestor(v, w);
     }
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        return getShortestPath(v, w).length;
+        if (v == null || w == null) throw new java.lang.IllegalArgumentException();
+
+        Set<Integer> vSafe = new HashSet<>();
+        Set<Integer> wSafe = new HashSet<>();
+
+        for (Integer i: v) {
+            if (i == null) throw new java.lang.IllegalArgumentException();
+            vSafe.add(i);
+        }
+
+
+        for (Integer i: w) {
+            if (i == null) throw new java.lang.IllegalArgumentException();
+            wSafe.add(i);
+        }
+
+        return getShortestPathLength(vSafe, wSafe);
     }
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-        return getShortestAncestor(v, w);
+        if (v == null || w == null) throw new java.lang.IllegalArgumentException();
+
+        Set<Integer> vSafe = new HashSet<>();
+        Set<Integer> wSafe = new HashSet<>();
+
+        for (Integer i: v) {
+            if (i == null) throw new java.lang.IllegalArgumentException();
+            vSafe.add(i);
+        }
+
+
+        for (Integer i: w) {
+            if (i == null) throw new java.lang.IllegalArgumentException();
+            wSafe.add(i);
+        }
+
+        return getShortestAncestor(vSafe, wSafe);
     }
 
     // Aux stuff ------------------------------------------------------------------------------------
@@ -56,21 +90,21 @@ public class SAP {
     }
 
 
-    private Integer getShortestAncestor(int v, int w) {
+    private Integer getShortestAncestor(Integer v, Integer w) {
         BreadthFirstDirectedPaths dfsGv = new BreadthFirstDirectedPaths(G, v);
         BreadthFirstDirectedPaths dfsGw = new BreadthFirstDirectedPaths(G, w);
 
         int minLength = Integer.MAX_VALUE;
-        int minNode = 0;
+        int minNode = -1;
 
         int length;
+        Set<Integer> common = getCommonNodes(v, w);
 
-        for (int x: getCommonNodes(v, w)) {
+        if (common.isEmpty()) {
+            return -1;
+        }
 
-            // System.out.printf("Path from %d to %d: %s\n", v, x, printPathTo(dfsGv.pathTo(x)));
-            // System.out.printf("Path from %d to %d: %s\n", w, x, printPathTo(dfsGw.pathTo(x)));
-
-
+        for (int x: common) {
             length = 0;
             for (int i: dfsGv.pathTo(x)) length++;
             for (int i: dfsGw.pathTo(x)) length++;
@@ -91,7 +125,13 @@ public class SAP {
 
         int length;
 
-        for (int x: getCommonNodes(v, w)) {
+        Set<Integer> common = getCommonNodes(v, w);
+
+        if (common.isEmpty()) {
+            return -1;
+        }
+
+        for (int x: common) {
             length = 0;
             for (int i: dfsGv.pathTo(x)) length++;
             for (int i: dfsGw.pathTo(x)) length++;
@@ -104,6 +144,7 @@ public class SAP {
     }
 
 
+    /*
     private String printPathTo(Iterable<Integer> pathTo) {
         List<Integer> path = new ArrayList<Integer>();
         for (int x: pathTo) {
@@ -118,12 +159,14 @@ public class SAP {
         return Arrays.toString(path2).replaceAll("\\[|\\]|,", "").replaceAll("\\s", "-");
     }
 
+     */
+
     private String printPath(Integer[] path) {
         return Arrays.toString(path).replaceAll("\\[|\\]|,", "").replaceAll("\\s", "-");
     }
 
 
-    private Set<Integer> reachableFrom(int v) {
+    private Set<Integer> reachableFrom(Integer v) {
         BreadthFirstDirectedPaths localG = new BreadthFirstDirectedPaths(G, v);
         Set<Integer> reachable = new HashSet<Integer>();
         for (int i = 0; i < G.V(); i++) {
@@ -145,28 +188,32 @@ public class SAP {
         return reachable;
     }
 
-    private Integer[] getShortestPath(int v, int w) {
+    private int getShortestPathLength(Integer v, Integer w) {
         BreadthFirstDirectedPaths dfsGv = new BreadthFirstDirectedPaths(G, v);
         BreadthFirstDirectedPaths dfsGw = new BreadthFirstDirectedPaths(G, w);
 
         int minNode = getShortestAncestor(v, w);
 
-        Integer[] shortestPath = knitPaths(dfsGv.pathTo(minNode), dfsGw.pathTo(minNode));
+        if (minNode == -1) {
+            return -1;
+        }
 
-        // System.out.printf("Shortest path for common ancestor %d: %s\n", minNode , printPath(shortestPath));
-        return shortestPath;
+        Integer[] shortestPath = knitPaths(dfsGv.pathTo(minNode), dfsGw.pathTo(minNode));
+        return shortestPath.length - 1;
     }
 
-    private Integer[] getShortestPath(Iterable<Integer> v, Iterable<Integer> w) {
+    private int getShortestPathLength(Iterable<Integer> v, Iterable<Integer> w) {
         BreadthFirstDirectedPaths dfsGv = new BreadthFirstDirectedPaths(G, v);
         BreadthFirstDirectedPaths dfsGw = new BreadthFirstDirectedPaths(G, w);
 
         int minNode = getShortestAncestor(v, w);
 
-        Integer[] shortestPath = knitPaths(dfsGv.pathTo(minNode), dfsGw.pathTo(minNode));
+        if (minNode == -1) {
+            return -1;
+        }
 
-        // System.out.printf("Shortest path for common ancestor %d: %s\n", minNode , printPath(shortestPath));
-        return shortestPath;
+        Integer[] shortestPath = knitPaths(dfsGv.pathTo(minNode), dfsGw.pathTo(minNode));
+        return shortestPath.length - 1;
     }
 
 
@@ -194,6 +241,7 @@ public class SAP {
 
     // do unit testing of this class
     public static void main(String[] args) {
+        /*
         // java-algs4 SAP digraph1.txt
         In in = new In(args[0]);
         Digraph G = new Digraph(in);
@@ -202,6 +250,8 @@ public class SAP {
         System.out.println(G);
 
         // System.out.println(sap.reachableFrom(16));
+
+         */
 
         /*
         while (!StdIn.isEmpty()) {
@@ -213,12 +263,13 @@ public class SAP {
         }
         */
 
-        List<Integer> A = new ArrayList<>(Arrays.asList(13,23,24));
-        List<Integer> B = new ArrayList<>(Arrays.asList(6,16,17));
+        /*
+        List<Integer> a = new ArrayList<>(Arrays.asList(13, 23, 24));
+        List<Integer> b = new ArrayList<>(Arrays.asList(6, 16, 17));
 
-        sap.getShortestPath(A, B);
+        sap.getShortestPath(a, b);
 
-        System.out.println(sap.printPath(sap.getShortestPath(A,B)));
+        System.out.println(sap.printPath(sap.getShortestPath(a, b)));
 
         while (!StdIn.isEmpty()) {
             int v = StdIn.readInt();
@@ -235,7 +286,7 @@ public class SAP {
          */
 
 
-        //DepthFirstDirectedPaths J = new DepthFirstDirectedPaths()
+        // DepthFirstDirectedPaths J = new DepthFirstDirectedPaths()
 
     }
 }
