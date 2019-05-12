@@ -1,0 +1,10 @@
+# Get number of unique words
+$ awk -F',' '{print $2}' < synsets.txt | sed -e 's/ /\n/g' | sort | uniq | wc -l
+119188
+
+# Get number of unique synsets
+$ wc -l synsets.txt
+82192
+
+
+
