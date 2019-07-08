@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.Picture;
 import edu.princeton.cs.algs4.Stack;
+import edu.princeton.cs.algs4.StdOut;
 
 public class SeamCarver {
 
@@ -515,7 +516,15 @@ public class SeamCarver {
 
 
         // Test topological order
-        // Picture picture = new Picture(5, 2);
+        Picture picture = new Picture(5, 2);
+
+        //( picture.set(0, 0, null);
+
+        Integer[] a =  {0,0,1};
+
+        Integer[][] c = new Integer[3][3];
+
+        StdOut.println(c[0][0] == null);
 
         /*
         Picture picture = new Picture(args[0]);
