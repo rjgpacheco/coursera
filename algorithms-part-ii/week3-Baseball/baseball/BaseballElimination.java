@@ -4,7 +4,6 @@ import edu.princeton.cs.algs4.StdOut;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("UUF_UNUSED_FIELD")
 public class BaseballElimination {
 
 
@@ -43,6 +42,8 @@ public class BaseballElimination {
             wins = Integer.parseInt(fields[2]);
             losses = Integer.parseInt(fields[3]);
             remaining = Integer.parseInt(fields[4]);
+
+            teams.add(team);
 
             // Auxiliary
             teamToIndex.put(team, i);
@@ -86,6 +87,7 @@ public class BaseballElimination {
 
     // number of remaining games between team1 and team2
     public int against(String team1, String team2) {
+        // throw new java.lang.UnsupportedOperationException("Not implemented yet");
         return 0;
     }
 
