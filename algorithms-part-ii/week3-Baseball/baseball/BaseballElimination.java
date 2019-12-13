@@ -11,27 +11,27 @@ public class BaseballElimination {
 
 
     private int numberOfTeams;
-    private ArrayList<String> teams = new ArrayList<>();
+    final private ArrayList<String> teams = new ArrayList<>();
 
-    private int[][] gamesBetween;
+    final private int[][] gamesBetween;
 
-    private HashMap<String, Integer> teamToIndex = new HashMap<>();
-    private HashMap<Integer, String> indexToTeam = new HashMap<>();
+    final private HashMap<String, Integer> teamToIndex = new HashMap<>();
+    final private HashMap<Integer, String> indexToTeam = new HashMap<>();
 
-    private HashMap<String, Integer> teamLosses = new HashMap<>();
-    private HashMap<String, Integer> teamWins = new HashMap<>();
-    private HashMap<String, Integer> teamRemaining = new HashMap<>();
+    final private HashMap<String, Integer> teamLosses = new HashMap<>();
+    final private HashMap<String, Integer> teamWins = new HashMap<>();
+    final private HashMap<String, Integer> teamRemaining = new HashMap<>();
 
     private class BaseballGraph {
 
-        private String team;
-        private FlowNetwork baseballGraph;
+        final private String team;
+        final private FlowNetwork baseballGraph;
 
         // Store which team goes to which node
         private final HashMap<Integer, Integer> teamToNode = new HashMap<>();
 
         private boolean isEliminated;
-        private ArrayList<String> certificateOfElimination = new ArrayList<>();
+        final private ArrayList<String> certificateOfElimination = new ArrayList<>();
 
 
         public BaseballGraph(String team) {
@@ -43,12 +43,12 @@ public class BaseballElimination {
             int teamIndex = teamToIndex.get(team);
 
             int numberVirtualNodes = 2;
-            int numberTeamNodes = numberOfTeams;
+            final  int numberTeamNodes = numberOfTeams;
             int numberGameNodes = (numberOfTeams*numberOfTeams - numberOfTeams) / 2;
 
             int numberOfNodes = numberVirtualNodes + numberTeamNodes + numberGameNodes;
 
-            FlowNetwork baseballGraph = new FlowNetwork(numberOfNodes);
+            FlowNetwork baseballFlowGraph = new FlowNetwork(numberOfNodes);
 
             int currentNode = 0;
 
@@ -72,7 +72,7 @@ public class BaseballElimination {
                 capacity = Math.max(capacity, 0); // TODO:fix this
 
                 FlowEdge edge = new FlowEdge(currentNode, VIRTUAL_SINK, capacity);
-                baseballGraph.addEdge(edge);
+                baseballFlowGraph.addEdge(edge);
             }
 
             int gameCapacity = 0;
@@ -87,17 +87,17 @@ public class BaseballElimination {
 
                     // Connect game vertices to virtual source
                     int games = gamesBetween[i][j];
-                    baseballGraph.addEdge(new FlowEdge(VIRTUAL_SOURCE, currentNode, games));
+                    baseballFlowGraph.addEdge(new FlowEdge(VIRTUAL_SOURCE, currentNode, games));
 
                     gameCapacity += games;
 
                     // Connect game vertices to team vertices
-                    baseballGraph.addEdge(new FlowEdge(currentNode, teamToNode.get(i), Double.POSITIVE_INFINITY));
-                    baseballGraph.addEdge(new FlowEdge(currentNode, teamToNode.get(j), Double.POSITIVE_INFINITY));
+                    baseballFlowGraph.addEdge(new FlowEdge(currentNode, teamToNode.get(i), Double.POSITIVE_INFINITY));
+                    baseballFlowGraph.addEdge(new FlowEdge(currentNode, teamToNode.get(j), Double.POSITIVE_INFINITY));
                 }
             }
 
-            FordFulkerson fordFulkerson = new FordFulkerson(baseballGraph, VIRTUAL_SOURCE, VIRTUAL_SINK);
+            FordFulkerson fordFulkerson = new FordFulkerson(baseballFlowGraph, VIRTUAL_SOURCE, VIRTUAL_SINK);
 
             // If some edges pointing from s are not full, then there is no
             // scenario in which team x can win the division.
@@ -193,7 +193,7 @@ public class BaseballElimination {
             // Fill in gamesBetween
             // First 4 fields will be teams, wins, losses and remaining
             // Offset it by 4 because the i-th entry will be to team i-5
-            for (int i=4; i < fields.length - 1; i++) {
+            for (int i = 4; i < fields.length - 1; i++) {
                 gamesBetween[teamIndex][i-4] = Integer.parseInt(fields[i]);
             }
 
@@ -289,10 +289,10 @@ public class BaseballElimination {
     }
 
 
-    private FlowNetwork getFlowNetwork(String team) {
+    /* private FlowNetwork getFlowNetwork(String team) {
         BaseballGraph network = new BaseballGraph(team);
         return network.getNetwork();
-    }
+    } */
 
 
     public static void main(String[] args) {
@@ -300,8 +300,8 @@ public class BaseballElimination {
 
         // division.createEliminationGraph("AAA");
 
-        //System.out.println(baseballElimination.teams());
-        //System.out.println(baseballElimination.numberOfTeams());
+        // System.out.println(baseballElimination.teams());
+        // System.out.println(baseballElimination.numberOfTeams());
 
         BaseballElimination division = new BaseballElimination(args[0]);
         for (String team : division.teams()) {
