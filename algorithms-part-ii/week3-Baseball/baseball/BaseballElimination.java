@@ -157,7 +157,7 @@ public class BaseballElimination {
         In in = new In(filename);
 
         // Read just the first line...
-        String line = in.readLine();
+        String line = in.readLine().trim();
         numberOfTeams = Integer.parseInt(line);
         gamesBetween = new int[numberOfTeams][numberOfTeams];
 
@@ -169,7 +169,7 @@ public class BaseballElimination {
 
             teamIndex += 1;
 
-            line = in.readLine();
+            line = in.readLine().trim();
 
             String[] fields = line.split(" +");
 
@@ -193,12 +193,17 @@ public class BaseballElimination {
             // Fill in gamesBetween
             // First 4 fields will be teams, wins, losses and remaining
             // Offset it by 4 because the i-th entry will be to team i-5
-            for (int i = 4; i < fields.length - 1; i++) {
+            for (int i = 4; i < fields.length; i++) {
                 gamesBetween[teamIndex][i-4] = Integer.parseInt(fields[i]);
             }
 
         }
 
+    }
+
+    private void validateTeamExists(String team) {
+        if (!teams.contains(team))
+            throw new IllegalArgumentException();
     }
 
     // number of teams
@@ -213,21 +218,26 @@ public class BaseballElimination {
 
     // number of wins for given team
     public int wins(String team) {
+        validateTeamExists(team);
         return teamWins.get(team);
     }
 
     // number of losses for given team
     public int losses(String team) {
+        validateTeamExists(team);
         return teamLosses.get(team);
     }
 
     // number of remaining games for given team
     public int remaining(String team) {
+        validateTeamExists(team);
         return teamRemaining.get(team);
     }
 
     // number of remaining games between team1 and team2
     public int against(String team1, String team2) {
+        validateTeamExists(team1);
+        validateTeamExists(team2);
         int i = teamToIndex.get(team1);
         int j = teamToIndex.get(team2);
         return gamesBetween[i][j];
@@ -235,6 +245,9 @@ public class BaseballElimination {
 
     // is given team eliminated?
     public boolean isEliminated(String team) {
+
+        validateTeamExists(team);
+
         if (isTriviallyEliminated(team)) {
             return true;
         }
@@ -252,9 +265,10 @@ public class BaseballElimination {
     // subset R of teams that eliminates given team
     public Iterable<String> certificateOfElimination(String team) {
 
+        validateTeamExists(team);
 
-        ArrayList<String> eliminatingTeams = new ArrayList<>();
         if (isTriviallyEliminated(team)) {
+            ArrayList<String> eliminatingTeams = new ArrayList<>();
             int maxPossibleWins = teamWins.get(team) + teamRemaining.get(team);
 
             for (String otherTeam: teams()) {
@@ -263,6 +277,8 @@ public class BaseballElimination {
                     eliminatingTeams.add(otherTeam);
                 }
             }
+
+            return eliminatingTeams;
         }
 
         BaseballGraph baseballGraph = new BaseballGraph(team);
@@ -271,7 +287,7 @@ public class BaseballElimination {
             return baseballGraph.certificateOfElimination();
         }
 
-        return eliminatingTeams;
+        return null;
     }
 
     private boolean isTriviallyEliminated(String team) {
@@ -315,6 +331,16 @@ public class BaseballElimination {
             else {
                 StdOut.println(team + " is not eliminated");
             }
+        }
+
+
+        int numberOfteams = division.numberOfTeams();
+
+        for (int i = 0; i < numberOfteams; i++) {
+            for (int j = 0; j < numberOfteams; j++) {
+                StdOut.print(division.gamesBetween[i][j] + " ");
+            }
+            StdOut.println("");
         }
 
     }
