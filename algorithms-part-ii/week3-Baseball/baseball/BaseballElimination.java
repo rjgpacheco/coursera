@@ -330,6 +330,7 @@ public class BaseballElimination {
             }
             else {
                 StdOut.println(team + " is not eliminated");
+     atus
             }
         }
 
